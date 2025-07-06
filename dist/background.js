@@ -9,8 +9,8 @@ class BackgroundService {
     this.defaultSettings = {
       defaultService: 'supabase' || 'supabase',
       supabaseConfig: {
-        url: 'https://your-project.supabase.co' || '',
-        anonKey: 'your_supabase_anon_key_here' || '',
+        url: 'https://avrmsyqizgyxtldtmyyr.supabase.co' || '',
+        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cm1zeXFpemd5eHRsZHRteXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzMzODYsImV4cCI6MjA2NzMwOTM4Nn0.lHA8s8iiMdHGFd7SIs0kK9Spo1xafEC3z-x8aitouz0' || '',
         bucketName: 'uploads' || 'uploads',
         linkExpiration: parseInt(3600) || 3600
       },
