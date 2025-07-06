@@ -51,12 +51,12 @@ export default async function handler(req, res) {
           status.supabase.connected = true;
           status.supabase.bucketsFound = data?.length || 0;
           
-          // Check if our specific bucket exists
-          const bucketExists = data?.some(bucket => bucket.name === bucketName);
+          // Check if our specific bucket exists (check both id and name)
+          const bucketExists = data?.some(bucket => bucket.id === bucketName || bucket.name === bucketName);
           status.supabase.bucketExists = bucketExists;
-          
+
           if (!bucketExists) {
-            status.supabase.warning = `Bucket '${bucketName}' not found. Available buckets: ${data?.map(b => b.name).join(', ') || 'none'}`;
+            status.supabase.warning = `Bucket '${bucketName}' not found. Available buckets: ${data?.map(b => `${b.id} (${b.name})`).join(', ') || 'none'}`;
           }
         }
       } catch (error) {
