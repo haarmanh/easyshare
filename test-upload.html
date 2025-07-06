@@ -35,6 +35,20 @@
             <button onclick="testUpload()">Test Upload</button>
             <div id="uploadResult"></div>
         </div>
+
+        <div class="test-section">
+            <h3>🔧 Extension Simulation Test</h3>
+            <p>This test simulates exactly what the EasyShare extension does:</p>
+            <ol>
+                <li>Initialize API service (fetch config)</li>
+                <li>Convert file to base64</li>
+                <li>Call upload API with exact same payload</li>
+                <li>Handle response like extension</li>
+            </ol>
+            <input type="file" id="extensionFileInput" />
+            <button onclick="testExtensionFlow()">🚀 Test Complete Extension Flow</button>
+            <div id="extensionResult"></div>
+        </div>
     </div>
 
     <script>
@@ -159,6 +173,102 @@
                 };
                 reader.onerror = error => reject(error);
             });
+        }
+
+        // Extension simulation - exactly like the real extension
+        async function testExtensionFlow() {
+            const fileInput = document.getElementById('extensionFileInput');
+            const resultDiv = document.getElementById('extensionResult');
+
+            if (!fileInput.files[0]) {
+                resultDiv.innerHTML = '<div class="error">Please select a file first!</div>';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            resultDiv.innerHTML = `<p>🔧 Simulating extension flow for ${file.name}...</p>`;
+            log(`🚀 EXTENSION SIMULATION: Starting for ${file.name} (${file.size} bytes)`);
+
+            try {
+                // Step 1: Initialize API service (like extension does)
+                log('📋 Step 1: Fetching API configuration...');
+                const configResponse = await fetch(`${API_BASE}/api/config`);
+
+                if (!configResponse.ok) {
+                    throw new Error(`Config API returned ${configResponse.status}: ${configResponse.statusText}`);
+                }
+
+                const config = await configResponse.json();
+                log(`✅ Config fetched: ${JSON.stringify(config.api)}`, 'success');
+
+                // Step 2: Use the baseUrl from config (like extension does)
+                const apiBaseUrl = config.api.baseUrl;
+                log(`🔗 Using API base URL: ${apiBaseUrl}`);
+
+                // Step 3: Convert file to base64 (exactly like extension)
+                log('📤 Step 2: Converting file to base64...');
+                const fileData = await fileToBase64(file);
+                log(`✅ File converted to base64 (${fileData.length} chars)`, 'success');
+
+                // Step 4: Create payload exactly like extension
+                const payload = {
+                    fileName: file.name,
+                    fileData: fileData,
+                    fileType: file.type || 'application/octet-stream'
+                };
+                log(`📦 Step 3: Created payload - fileName: ${payload.fileName}, fileType: ${payload.fileType}`);
+
+                // Step 5: Call upload API exactly like extension
+                log('🚀 Step 4: Calling upload API...');
+                const uploadResponse = await fetch(`${apiBaseUrl}/api/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                log(`📡 Upload response status: ${uploadResponse.status} ${uploadResponse.statusText}`);
+
+                // Step 6: Handle response exactly like extension
+                if (!uploadResponse.ok) {
+                    const errorData = await uploadResponse.json().catch(() => ({}));
+                    const errorMessage = errorData.error || `Upload failed with status ${uploadResponse.status}`;
+                    throw new Error(errorMessage);
+                }
+
+                const result = await uploadResponse.json();
+                log(`✅ Upload successful!`, 'success');
+
+                // Step 7: Display results like extension would
+                if (result.success) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>🎉 Extension Simulation: SUCCESS!</h4>
+                            <p><strong>✅ All steps completed successfully</strong></p>
+                            <p><strong>📁 File:</strong> ${result.originalName}</p>
+                            <p><strong>🔗 Download Link:</strong> <a href="${result.link}" target="_blank">${result.link}</a></p>
+                            <p><strong>⏰ Expires In:</strong> ${result.expiresIn} seconds</p>
+                            <p><strong>💾 Server File Name:</strong> ${result.fileName}</p>
+                            <h5>📊 Full Response:</h5>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </div>
+                    `;
+                    log(`🎉 EXTENSION SIMULATION: COMPLETE SUCCESS!`, 'success');
+                } else {
+                    throw new Error(result.error || 'Upload failed');
+                }
+
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Extension Simulation: FAILED</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>This indicates the same error the extension would encounter.</p>
+                    </div>
+                `;
+                log(`❌ EXTENSION SIMULATION: FAILED - ${error.message}`, 'error');
+            }
         }
 
         // Auto-run health check on page load
