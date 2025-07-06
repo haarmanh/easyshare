@@ -975,11 +975,12 @@ class PopupController {
         }
       }
 
-      // Try primary service first
-      let uploadService = this.services[this.settings.defaultService] || this.services['supabase'];
+      // FORCE VERCEL API SERVICE - Always use vercel-api, never fallback to supabase
+      let uploadService = this.services['vercel-api'];
       console.log('🚀 UPLOAD DEBUG:');
       console.log('- Settings defaultService:', this.settings.defaultService);
       console.log('- Available services:', Object.keys(this.services));
+      console.log('- FORCED SERVICE: vercel-api (bypassing settings)');
       console.log('- Selected service:', uploadService.name);
       console.log('- Service object:', uploadService);
 

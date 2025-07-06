@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🔍 EasyShare Extension Debug Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .debug-section { margin: 15px 0; padding: 15px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .success { background-color: #d4edda; border-left: 4px solid #28a745; }
+        .error { background-color: #f8d7da; border-left: 4px solid #dc3545; }
+        .warning { background-color: #fff3cd; border-left: 4px solid #ffc107; }
+        .info { background-color: #d1ecf1; border-left: 4px solid #17a2b8; }
+        button { padding: 12px 24px; margin: 8px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-danger { background: #dc3545; color: white; }
+        input[type="file"] { margin: 10px 0; padding: 8px; }
+        pre { background: #f8f9fa; padding: 12px; border-radius: 4px; overflow-x: auto; font-size: 12px; }
+        .step { margin: 10px 0; padding: 10px; border-left: 3px solid #ccc; }
+        .step.active { border-left-color: #007bff; background: #f8f9ff; }
+        .step.success { border-left-color: #28a745; background: #f8fff8; }
+        .step.error { border-left-color: #dc3545; background: #fff8f8; }
+        .log { font-family: monospace; font-size: 11px; color: #666; margin: 5px 0; }
+        h1 { color: #333; text-align: center; }
+        h3 { color: #555; margin-top: 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 EasyShare Extension Debug Tool</h1>
+        <p style="text-align: center; color: #666;">This tool simulates exactly what the extension does and shows detailed debugging info.</p>
+        
+        <div class="debug-section info">
+            <h3>📋 Debug Log</h3>
+            <div id="debugLog">Ready to start debugging...</div>
+        </div>
+
+        <div class="debug-section">
+            <h3>🧪 Complete Extension Simulation</h3>
+            <p>This test performs every step the extension does:</p>
+            <input type="file" id="testFile" />
+            <button class="btn-primary" onclick="runCompleteTest()">🚀 Run Complete Extension Debug</button>
+            <div id="testResults"></div>
+        </div>
+
+        <div class="debug-section">
+            <h3>🔧 Individual Tests</h3>
+            <button class="btn-success" onclick="testStorageAccess()">📦 Test Chrome Storage</button>
+            <button class="btn-success" onclick="testApiConfig()">⚙️ Test API Config</button>
+            <button class="btn-success" onclick="testApiHealth()">❤️ Test API Health</button>
+            <button class="btn-danger" onclick="clearAllTests()">🗑️ Clear Results</button>
+        </div>
+
+        <div class="debug-section">
+            <h3>📊 Test Results</h3>
+            <div id="individualResults"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://easyshare-vnbw.vercel.app';
+        let testStep = 0;
+
+        function log(message, type = 'info') {
+            const debugLog = document.getElementById('debugLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.className = `log ${type}`;
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            debugLog.appendChild(logEntry);
+            debugLog.scrollTop = debugLog.scrollHeight;
+            console.log(`[${timestamp}] ${message}`);
+        }
+
+        function createStep(title, status = 'pending') {
+            testStep++;
+            const step = document.createElement('div');
+            step.className = `step ${status}`;
+            step.id = `step-${testStep}`;
+            step.innerHTML = `<strong>Step ${testStep}:</strong> ${title}`;
+            return step;
+        }
+
+        function updateStep(stepId, status, message = '') {
+            const step = document.getElementById(stepId);
+            if (step) {
+                step.className = `step ${status}`;
+                if (message) {
+                    step.innerHTML += `<br><small>${message}</small>`;
+                }
+            }
+        }
+
+        async function runCompleteTest() {
+            const fileInput = document.getElementById('testFile');
+            const resultsDiv = document.getElementById('testResults');
+            
+            if (!fileInput.files[0]) {
+                resultsDiv.innerHTML = '<div class="error">❌ Please select a file first!</div>';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            resultsDiv.innerHTML = '';
+            testStep = 0;
+            
+            log(`🚀 Starting complete extension simulation for: ${file.name} (${file.size} bytes)`, 'info');
+
+            try {
+                // Step 1: Simulate Chrome Storage Access
+                const step1 = createStep('Simulate Chrome Storage Access', 'active');
+                resultsDiv.appendChild(step1);
+                log('📦 Step 1: Simulating Chrome storage access...');
+                
+                // Simulate what the extension would have in storage
+                const mockStoredSettings = {
+                    defaultService: 'vercel-api',
+                    supabaseConfig: {
+                        url: 'https://avrmsyqizgyxtldtmyyr.supabase.co',
+                        anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cm1zeXFpemd5eHRsZHRteXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzMzODYsImV4cCI6MjA2NzMwOTM4Nn0.lHA8s8iiMdHGFd7SIs0kK9Spo1xafEC3z-x8aitouz0',
+                        bucketName: 'uploads',
+                        linkExpiration: 3600
+                    }
+                };
+                
+                updateStep('step-1', 'success', `Settings loaded: defaultService = ${mockStoredSettings.defaultService}`);
+                log(`✅ Mock settings: defaultService = ${mockStoredSettings.defaultService}`, 'success');
+
+                // Step 2: Initialize API Service
+                const step2 = createStep('Initialize API Service', 'active');
+                resultsDiv.appendChild(step2);
+                log('🔧 Step 2: Initializing API service...');
+                
+                let baseUrl = API_BASE;
+                
+                // Try to get stored API base URL (like extension does)
+                try {
+                    const configResponse = await fetch(`${baseUrl}/api/config`);
+                    if (!configResponse.ok) {
+                        throw new Error(`Config API returned ${configResponse.status}: ${configResponse.statusText}`);
+                    }
+                    
+                    const config = await configResponse.json();
+                    if (config.api && config.api.baseUrl) {
+                        baseUrl = config.api.baseUrl;
+                    }
+                    
+                    updateStep('step-2', 'success', `API initialized. Base URL: ${baseUrl}`);
+                    log(`✅ API service initialized. Base URL: ${baseUrl}`, 'success');
+                    log(`📋 Config received: ${JSON.stringify(config.api)}`, 'info');
+                } catch (error) {
+                    updateStep('step-2', 'error', `Failed: ${error.message}`);
+                    log(`❌ API initialization failed: ${error.message}`, 'error');
+                    throw error;
+                }
+
+                // Step 3: Check Service Selection
+                const step3 = createStep('Check Service Selection Logic', 'active');
+                resultsDiv.appendChild(step3);
+                log('🎯 Step 3: Checking service selection logic...');
+                
+                const availableServices = ['vercel-api', 'supabase', 'test'];
+                const selectedService = mockStoredSettings.defaultService;
+                const serviceExists = availableServices.includes(selectedService);
+                
+                if (!serviceExists) {
+                    updateStep('step-3', 'error', `Service '${selectedService}' not found in available services: ${availableServices.join(', ')}`);
+                    log(`❌ Service '${selectedService}' not available!`, 'error');
+                    throw new Error(`Service '${selectedService}' not available`);
+                }
+                
+                updateStep('step-3', 'success', `Service '${selectedService}' selected from available: ${availableServices.join(', ')}`);
+                log(`✅ Service selection: ${selectedService}`, 'success');
+
+                // Step 4: Convert File to Base64
+                const step4 = createStep('Convert File to Base64', 'active');
+                resultsDiv.appendChild(step4);
+                log('📤 Step 4: Converting file to base64...');
+                
+                const fileData = await fileToBase64(file);
+                updateStep('step-4', 'success', `File converted: ${fileData.length} characters`);
+                log(`✅ File converted to base64: ${fileData.length} characters`, 'success');
+
+                // Step 5: Create Upload Payload
+                const step5 = createStep('Create Upload Payload', 'active');
+                resultsDiv.appendChild(step5);
+                log('📦 Step 5: Creating upload payload...');
+                
+                const payload = {
+                    fileName: file.name,
+                    fileData: fileData,
+                    fileType: file.type || 'application/octet-stream'
+                };
+                
+                updateStep('step-5', 'success', `Payload created: ${payload.fileName}, ${payload.fileType}`);
+                log(`✅ Payload created: fileName=${payload.fileName}, fileType=${payload.fileType}`, 'success');
+
+                // Step 6: Make Upload Request
+                const step6 = createStep('Make Upload Request', 'active');
+                resultsDiv.appendChild(step6);
+                log('🚀 Step 6: Making upload request...');
+                
+                const uploadResponse = await fetch(`${baseUrl}/api/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                log(`📡 Upload response: ${uploadResponse.status} ${uploadResponse.statusText}`, 'info');
+
+                if (!uploadResponse.ok) {
+                    const errorData = await uploadResponse.json().catch(() => ({}));
+                    const errorMessage = errorData.error || `Upload failed with status ${uploadResponse.status}`;
+                    updateStep('step-6', 'error', `HTTP ${uploadResponse.status}: ${errorMessage}`);
+                    log(`❌ Upload failed: ${errorMessage}`, 'error');
+                    throw new Error(errorMessage);
+                }
+
+                const result = await uploadResponse.json();
+                updateStep('step-6', 'success', `Upload successful! Link: ${result.link}`);
+                log(`✅ Upload successful!`, 'success');
+
+                // Step 7: Final Results
+                const step7 = createStep('Process Results', 'success');
+                resultsDiv.appendChild(step7);
+                
+                const finalResult = `
+                    <div class="success" style="margin-top: 20px;">
+                        <h4>🎉 EXTENSION SIMULATION: COMPLETE SUCCESS!</h4>
+                        <p><strong>📁 File:</strong> ${result.originalName || file.name}</p>
+                        <p><strong>🔗 Download Link:</strong> <a href="${result.link}" target="_blank">${result.link}</a></p>
+                        <p><strong>⏰ Expires In:</strong> ${result.expiresIn} seconds</p>
+                        <p><strong>💾 Server File Name:</strong> ${result.fileName}</p>
+                        <details>
+                            <summary>📊 Full Response</summary>
+                            <pre>${JSON.stringify(result, null, 2)}</pre>
+                        </details>
+                    </div>
+                `;
+                
+                resultsDiv.innerHTML += finalResult;
+                log(`🎉 EXTENSION SIMULATION: COMPLETE SUCCESS!`, 'success');
+
+            } catch (error) {
+                const errorResult = `
+                    <div class="error" style="margin-top: 20px;">
+                        <h4>❌ EXTENSION SIMULATION: FAILED</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <p>This is the exact same error the extension would encounter.</p>
+                    </div>
+                `;
+                
+                resultsDiv.innerHTML += errorResult;
+                log(`❌ EXTENSION SIMULATION: FAILED - ${error.message}`, 'error');
+            }
+        }
+
+        async function testStorageAccess() {
+            log('📦 Testing Chrome storage simulation...', 'info');
+            // Simulate what would be in Chrome storage
+            const mockStorage = {
+                settings: {
+                    defaultService: 'vercel-api',
+                    showNotifications: true,
+                    autoCopyToClipboard: true
+                }
+            };
+            
+            document.getElementById('individualResults').innerHTML += `
+                <div class="success">
+                    <h4>📦 Chrome Storage Simulation</h4>
+                    <pre>${JSON.stringify(mockStorage, null, 2)}</pre>
+                </div>
+            `;
+            log('✅ Chrome storage simulation complete', 'success');
+        }
+
+        async function testApiConfig() {
+            log('⚙️ Testing API config endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_BASE}/api/config`);
+                const data = await response.json();
+                
+                document.getElementById('individualResults').innerHTML += `
+                    <div class="success">
+                        <h4>⚙️ API Config Test</h4>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                log('✅ API config test successful', 'success');
+            } catch (error) {
+                document.getElementById('individualResults').innerHTML += `
+                    <div class="error">
+                        <h4>❌ API Config Test Failed</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                log(`❌ API config test failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function testApiHealth() {
+            log('❤️ Testing API health endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                const data = await response.json();
+                
+                document.getElementById('individualResults').innerHTML += `
+                    <div class="${data.healthy ? 'success' : 'error'}">
+                        <h4>❤️ API Health Test</h4>
+                        <p><strong>Status:</strong> ${response.status} ${response.statusText}</p>
+                        <p><strong>Healthy:</strong> ${data.healthy ? '✅ Yes' : '❌ No'}</p>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+                log(`✅ API health test: ${data.healthy ? 'HEALTHY' : 'UNHEALTHY'}`, data.healthy ? 'success' : 'error');
+            } catch (error) {
+                document.getElementById('individualResults').innerHTML += `
+                    <div class="error">
+                        <h4>❌ API Health Test Failed</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                log(`❌ API health test failed: ${error.message}`, 'error');
+            }
+        }
+
+        function clearAllTests() {
+            document.getElementById('testResults').innerHTML = '';
+            document.getElementById('individualResults').innerHTML = '';
+            document.getElementById('debugLog').innerHTML = 'Ready to start debugging...';
+            testStep = 0;
+            log('🗑️ All test results cleared', 'info');
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Auto-run individual tests on page load
+        window.onload = () => {
+            log('🔍 Extension Debug Tool loaded', 'info');
+            testApiHealth();
+            testApiConfig();
+        };
+    </script>
+</body>
+</html>
