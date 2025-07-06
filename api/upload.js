@@ -49,8 +49,27 @@ export default async function handler(req, res) {
       });
     }
 
+    // Validate file size (base64 is ~33% larger than original)
+    const estimatedFileSize = (fileData.length * 3) / 4;
+    const maxFileSize = 100 * 1024 * 1024; // 100MB
+
+    if (estimatedFileSize > maxFileSize) {
+      return res.status(413).json({
+        error: `File too large: ${(estimatedFileSize / 1024 / 1024).toFixed(2)} MB (max: 100MB)`
+      });
+    }
+
+    console.log(`📊 File size: ${(estimatedFileSize / 1024 / 1024).toFixed(2)} MB`);
+
     // Convert base64 data to buffer
-    const buffer = Buffer.from(fileData, 'base64');
+    let buffer;
+    try {
+      buffer = Buffer.from(fileData, 'base64');
+    } catch (error) {
+      return res.status(400).json({
+        error: 'Invalid base64 data'
+      });
+    }
 
     // Create unique filename
     const timestamp = Date.now();
