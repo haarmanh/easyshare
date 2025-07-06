@@ -126,7 +126,9 @@
             <div class="setting-group">
                 <label for="serviceSelect">Upload Service:</label>
                 <select id="serviceSelect">
-                    <option value="supabase">Supabase Storage (50MB, reliable) ⭐ Only Option</option>
+                    <option value="vercel-api">Vercel API → Supabase (100MB, secure) ⭐ Recommended</option>
+                    <option value="supabase">Direct Supabase (Legacy)</option>
+                    <option value="test">Test Service (Demo)</option>
                 </select>
             </div>
 
@@ -145,31 +147,43 @@
                 </label>
             </div>
 
-            <!-- Supabase Configuration -->
-            <div class="setting-group" id="supabaseConfig">
-                <h4>Supabase Configuration</h4>
-                <p class="supabase-description">
-                    🔧 Get these values from your Supabase Dashboard → Settings → API
-                </p>
-                <label>Project URL:</label>
-                <input type="text" id="supabaseUrl" placeholder="https://your-project.supabase.co" class="supabase-input">
-                <label>Anon Key:</label>
-                <input type="text" id="supabaseAnonKey" placeholder="Your Supabase anon key" class="supabase-input">
-                <label>Bucket Name:</label>
-                <input type="text" id="supabaseBucket" placeholder="uploads" value="uploads" class="supabase-input">
-                <label>Link Expiration (seconds):</label>
-                <input type="number" id="supabaseExpiration" placeholder="3600" value="3600" min="60" max="604800" class="supabase-input">
-                <p class="supabase-warning">
-                    ⚠️ Make sure your bucket has proper RLS policies for uploads
-                </p>
-                <button id="saveSupabaseConfig" class="supabase-save-btn">
-                    Save Supabase Config
-                </button>
+            <!-- Service Information -->
+            <div class="setting-group" id="serviceInfo">
+                <h4>Service Information</h4>
+                <div id="vercelApiInfo" class="service-info">
+                    <p class="service-description">
+                        🚀 <strong>Vercel API (Recommended)</strong><br>
+                        Secure file uploads through our backend API.<br>
+                        ✅ No configuration required<br>
+                        ✅ 100MB file limit<br>
+                        ✅ Automatic Supabase integration
+                    </p>
+                </div>
+                <div id="supabaseInfo" class="service-info hidden">
+                    <h4>Legacy Supabase Configuration</h4>
+                    <p class="supabase-description">
+                        🔧 Get these values from your Supabase Dashboard → Settings → API
+                    </p>
+                    <label>Project URL:</label>
+                    <input type="text" id="supabaseUrl" placeholder="https://your-project.supabase.co" class="supabase-input">
+                    <label>Anon Key:</label>
+                    <input type="text" id="supabaseAnonKey" placeholder="Your Supabase anon key" class="supabase-input">
+                    <label>Bucket Name:</label>
+                    <input type="text" id="supabaseBucket" placeholder="uploads" value="uploads" class="supabase-input">
+                    <label>Link Expiration (seconds):</label>
+                    <input type="number" id="supabaseExpiration" placeholder="3600" value="3600" min="60" max="604800" class="supabase-input">
+                    <p class="supabase-warning">
+                        ⚠️ Make sure your bucket has proper RLS policies for uploads
+                    </p>
+                    <button id="saveSupabaseConfig" class="supabase-save-btn">
+                        Save Supabase Config
+                    </button>
+                </div>
             </div>
 
             <div class="setting-group">
                 <button class="reset-btn" id="forceResetBtn">
-                    🔄 Reset to Supabase Storage
+                    🔄 Reset to Vercel API
                 </button>
             </div>
         </div>

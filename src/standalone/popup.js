@@ -549,8 +549,8 @@ class PopupController {
     this.loadSettings().then(() => {
       // Force reset if any old service is still the default (cleanup from old versions)
       if (!this.services[this.settings.defaultService]) {
-        console.log('🚨 DETECTED OLD SERVICE - RESETTING TO Supabase');
-        this.settings.defaultService = 'supabase';
+        console.log('🚨 DETECTED OLD SERVICE - RESETTING TO Vercel API');
+        this.settings.defaultService = 'vercel-api';
         this.saveSettings();
       }
     });
@@ -674,8 +674,9 @@ class PopupController {
     });
 
     // IMMEDIATE SETTINGS SAVE - Add event listeners for dropdown changes
-    document.getElementById('serviceSelect')?.addEventListener('change', () => {
+    document.getElementById('serviceSelect')?.addEventListener('change', (e) => {
       console.log('Service changed - saving immediately');
+      this.handleServiceChange(e.target.value);
       this.saveSettingsFromUI();
     });
 
@@ -1355,6 +1356,24 @@ class PopupController {
     this.saveSettingsFromUI();
   }
 
+  handleServiceChange(selectedService) {
+    const vercelApiInfo = document.getElementById('vercelApiInfo');
+    const supabaseInfo = document.getElementById('supabaseInfo');
+
+    // Show/hide configuration sections based on selected service
+    if (selectedService === 'vercel-api') {
+      vercelApiInfo?.classList.remove('hidden');
+      supabaseInfo?.classList.add('hidden');
+    } else if (selectedService === 'supabase') {
+      vercelApiInfo?.classList.add('hidden');
+      supabaseInfo?.classList.remove('hidden');
+    } else {
+      // For other services (test, etc.), hide both
+      vercelApiInfo?.classList.add('hidden');
+      supabaseInfo?.classList.add('hidden');
+    }
+  }
+
   loadSettingsUI() {
     const serviceSelect = document.getElementById('serviceSelect');
     const notificationsCheck = document.getElementById('notificationsCheck');
@@ -1363,6 +1382,9 @@ class PopupController {
     serviceSelect.value = this.settings.defaultService;
     notificationsCheck.checked = this.settings.showNotifications;
     autoCopyCheck.checked = this.settings.autoCopyToClipboard;
+
+    // Update service-specific UI
+    this.handleServiceChange(this.settings.defaultService);
 
     // Load Supabase configuration
     if (this.settings.supabaseConfig) {
@@ -1409,16 +1431,16 @@ class PopupController {
 
       // Ensure valid service is selected
       if (!this.settings.defaultService || !this.services[this.settings.defaultService]) {
-        console.log('❌ Invalid service detected, setting 0x0.st as default (was:', this.settings.defaultService, ')');
-        this.settings.defaultService = '0x0.st';
+        console.log('❌ Invalid service detected, setting vercel-api as default (was:', this.settings.defaultService, ')');
+        this.settings.defaultService = 'vercel-api';
         await this.saveSettings();
       } else {
         console.log('✅ Valid service selected:', this.settings.defaultService);
       }
     } catch (error) {
       console.error('Failed to load settings:', error);
-      // Ensure 0x0.st is default even if storage fails
-      this.settings.defaultService = '0x0.st';
+      // Ensure vercel-api is default even if storage fails
+      this.settings.defaultService = 'vercel-api';
     }
   }
 
@@ -1478,17 +1500,17 @@ class PopupController {
     }
   }
 
-  // Force reset to Supabase Storage - call this if there are persistent issues
+  // Force reset to Vercel API - call this if there are persistent issues
   async forceReset0x0st() {
-    console.log('🔄 FORCE RESET: Clearing all settings and setting Supabase as default');
+    console.log('🔄 FORCE RESET: Clearing all settings and setting Vercel API as default');
     try {
       // Clear all stored settings
       await chrome.storage.sync.clear();
       await chrome.storage.local.clear();
 
-      // Set fresh settings with Supabase using environment variables
+      // Set fresh settings with Vercel API using environment variables
       this.settings = {
-        defaultService: process.env.DEFAULT_SERVICE || 'supabase',
+        defaultService: process.env.DEFAULT_SERVICE || 'vercel-api',
         supabaseConfig: {
           url: process.env.SUPABASE_URL || '',
           anonKey: process.env.SUPABASE_ANON_KEY || '',
@@ -1505,7 +1527,7 @@ class PopupController {
       await this.saveSettings();
       this.loadSettingsUI();
 
-      console.log('✅ Reset complete! Default service is now Supabase Storage');
+      console.log('✅ Reset complete! Default service is now Vercel API');
       this.showToast('🔄 Settings reset! Now using Supabase Storage', 'success', 3000);
     } catch (error) {
       console.error('Failed to reset settings:', error);
