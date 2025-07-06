@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Platform Icons</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .icon-test { margin: 10px; display: inline-block; text-align: center; }
+        .icon { width: 32px; height: 32px; margin: 5px; }
+        .icon-label { display: block; font-size: 12px; margin-top: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Platform Icons Test</h1>
+    
+    <h2>Email Icons</h2>
+    <div class="icon-test">
+        <img class="icon" id="gmail-icon" alt="Gmail">
+        <span class="icon-label">Gmail</span>
+    </div>
+    <div class="icon-test">
+        <img class="icon" id="outlook-icon" alt="Outlook">
+        <span class="icon-label">Outlook</span>
+    </div>
+    
+    <h2>Messaging Icons</h2>
+    <div class="icon-test">
+        <img class="icon" id="whatsapp-icon" alt="WhatsApp">
+        <span class="icon-label">WhatsApp</span>
+    </div>
+    <div class="icon-test">
+        <img class="icon" id="telegram-icon" alt="Telegram">
+        <span class="icon-label">Telegram</span>
+    </div>
+    <div class="icon-test">
+        <img class="icon" id="signal-icon" alt="Signal">
+        <span class="icon-label">Signal</span>
+    </div>
+    
+    <h2>Team Icons</h2>
+    <div class="icon-test">
+        <img class="icon" id="slack-icon" alt="Slack">
+        <span class="icon-label">Slack</span>
+    </div>
+    <div class="icon-test">
+        <img class="icon" id="teams-icon" alt="Teams">
+        <span class="icon-label">Teams</span>
+    </div>
+    <div class="icon-test">
+        <img class="icon" id="discord-icon" alt="Discord">
+        <span class="icon-label">Discord</span>
+    </div>
+
+    <script src="dist/icons/platform-icons.js"></script>
+    <script>
+        // Test if icons load properly
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('PlatformIcons:', window.PlatformIcons);
+            
+            if (window.PlatformIcons) {
+                // Email icons
+                document.getElementById('gmail-icon').src = window.PlatformIcons.email.gmail;
+                document.getElementById('outlook-icon').src = window.PlatformIcons.email.outlook;
+                
+                // Messaging icons
+                document.getElementById('whatsapp-icon').src = window.PlatformIcons.messaging.whatsapp;
+                document.getElementById('telegram-icon').src = window.PlatformIcons.messaging.telegram;
+                document.getElementById('signal-icon').src = window.PlatformIcons.messaging.signal;
+                
+                // Team icons
+                document.getElementById('slack-icon').src = window.PlatformIcons.team.slack;
+                document.getElementById('teams-icon').src = window.PlatformIcons.team.teams;
+                document.getElementById('discord-icon').src = window.PlatformIcons.team.discord;
+                
+                console.log('Icons loaded successfully!');
+            } else {
+                console.error('PlatformIcons not found!');
+            }
+        });
+    </script>
+</body>
+</html>

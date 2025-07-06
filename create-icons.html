@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EasyShare Icon Generator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        canvas { border: 1px solid #ccc; margin: 10px; }
+        .icon-set { margin: 20px 0; }
+    </style>
+</head>
+<body>
+    <h1>EasyShare Icon Generator</h1>
+    <p>This page generates simple icons for the EasyShare extension. Right-click each canvas and "Save image as" to save the PNG files.</p>
+    
+    <div class="icon-set">
+        <h3>16x16 Icon</h3>
+        <canvas id="icon16" width="16" height="16"></canvas>
+        
+        <h3>32x32 Icon</h3>
+        <canvas id="icon32" width="32" height="32"></canvas>
+        
+        <h3>48x48 Icon</h3>
+        <canvas id="icon48" width="48" height="48"></canvas>
+        
+        <h3>128x128 Icon</h3>
+        <canvas id="icon128" width="128" height="128"></canvas>
+    </div>
+
+    <script>
+        function drawIcon(canvas, size) {
+            const ctx = canvas.getContext('2d');
+            
+            // Clear canvas
+            ctx.clearRect(0, 0, size, size);
+            
+            // Background circle
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 - 1, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Upload arrow
+            ctx.fillStyle = 'white';
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = Math.max(1, size/16);
+            
+            const centerX = size / 2;
+            const centerY = size / 2;
+            const arrowSize = size * 0.3;
+            
+            // Arrow shaft
+            ctx.fillRect(centerX - size/16, centerY - arrowSize/2, size/8, arrowSize);
+            
+            // Arrow head
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY - arrowSize/2);
+            ctx.lineTo(centerX - arrowSize/2, centerY);
+            ctx.lineTo(centerX + arrowSize/2, centerY);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Small document icon at bottom
+            const docSize = size * 0.15;
+            ctx.fillRect(centerX - docSize/2, centerY + arrowSize/4, docSize, docSize);
+        }
+
+        // Generate all icon sizes
+        [16, 32, 48, 128].forEach(size => {
+            const canvas = document.getElementById(`icon${size}`);
+            drawIcon(canvas, size);
+        });
+    </script>
+    
+    <div style="margin-top: 30px; padding: 15px; background: #f0f0f0; border-radius: 5px;">
+        <h3>Instructions:</h3>
+        <ol>
+            <li>Right-click on each canvas above</li>
+            <li>Select "Save image as..." or "Save picture as..."</li>
+            <li>Save each as: icon16.png, icon32.png, icon48.png, icon128.png</li>
+            <li>Copy the PNG files to the <code>dist/icons/</code> directory</li>
+            <li>Remove the .placeholder files from <code>dist/icons/</code></li>
+        </ol>
+    </div>
+</body>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyShare</title>
+    <link rel="stylesheet" href="styles/popup.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">📤</span>
+                <span class="logo-text">EasyShare</span>
+            </div>
+            <button class="settings-btn" id="settingsBtn" title="Settings">
+                <span class="icon">⚙️</span>
+            </button>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Upload Area -->
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-content" id="uploadContent">
+                    <div class="upload-icon">📤</div>
+                    <h2 class="upload-title">Drop files or folders here</h2>
+                    <p class="upload-subtitle">Share files & folders via Supabase • Up to 50MB • Folders auto-compressed to ZIP</p>
+                    <div class="upload-buttons">
+                        <button class="select-file-btn" id="selectFileBtn">Choose File</button>
+                        <button class="select-folder-btn" id="selectFolderBtn">Choose Folder</button>
+                    </div>
+                </div>
+                
+                <!-- Progress State -->
+                <div class="progress-content hidden" id="progressContent">
+                    <div class="file-info">
+                        <span class="file-icon" id="fileIcon">📁</span>
+                        <div class="file-details">
+                            <div class="file-name" id="fileName">filename.txt</div>
+                            <div class="file-size" id="fileSize">1.2 MB</div>
+                        </div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div class="progress-text" id="progressText">Uploading... 0%</div>
+                </div>
+
+                <!-- Success State -->
+                <div class="success-content hidden" id="successContent">
+                    <div class="success-icon">🎉</div>
+                    <h3 class="success-title">Ready to share!</h3>
+                    <div class="link-container">
+                        <input type="text" class="link-input" id="linkInput" readonly>
+                        <button class="copy-btn" id="copyBtn" title="Copy to clipboard">
+                            <span class="icon">📋</span>
+                        </button>
+                    </div>
+                    <p class="success-subtitle">Link copied to clipboard</p>
+
+                    <!-- Interactive Sharing Buttons -->
+                    <div class="sharing-buttons">
+                        <h4 class="sharing-title">Share directly to:</h4>
+                        <div class="sharing-grid">
+                            <button class="share-btn email-btn" id="emailShareBtn" title="Share via Email">
+                                <span class="share-icon" id="emailIcon">📧</span>
+                                <span class="share-label">Email</span>
+                            </button>
+                            <button class="share-btn messaging-btn" id="messagingShareBtn" title="Share via Messaging">
+                                <span class="share-icon" id="messagingIcon">💬</span>
+                                <span class="share-label">Messaging</span>
+                            </button>
+                            <button class="share-btn team-btn" id="teamShareBtn" title="Share to Team">
+                                <span class="share-icon" id="teamIcon">🧑‍💻</span>
+                                <span class="share-label">Team Tools</span>
+                            </button>
+                            <button class="share-btn universal-btn" id="universalShareBtn" title="Universal Share">
+                                <span class="share-icon" id="universalIcon">🌐</span>
+                                <span class="share-label">Universal</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button class="new-upload-btn" id="newUploadBtn">Share Another File</button>
+                </div>
+
+                <!-- Error State -->
+                <div class="error-content hidden" id="errorContent">
+                    <div class="error-icon">❌</div>
+                    <h3 class="error-title">Upload failed</h3>
+                    <p class="error-message" id="errorMessage">Something went wrong</p>
+                    <button class="retry-btn" id="retryBtn">Try Again</button>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <button class="action-btn" id="historyBtn" title="Upload History">
+                    <span class="icon">📋</span>
+                    <span class="label">History</span>
+                </button>
+                <button class="action-btn" id="settingsBtn2" title="Settings">
+                    <span class="icon">⚙️</span>
+                    <span class="label">Settings</span>
+                </button>
+            </div>
+        </main>
+
+        <!-- Hidden file inputs -->
+        <input type="file" id="fileInput" class="file-input-hidden">
+        <input type="file" id="folderInput" class="file-input-hidden" multiple webkitdirectory>
+    </div>
+
+    <!-- History Panel Container -->
+    <div class="history-container hidden" id="historyContainer"></div>
+
+    <!-- Settings Panel (initially hidden) -->
+    <div class="settings-panel hidden" id="settingsPanel">
+        <div class="settings-header">
+            <h3>Settings</h3>
+            <button class="close-btn" id="closeSettingsBtn">×</button>
+        </div>
+        <div class="settings-content">
+            <div class="setting-group">
+                <label for="serviceSelect">Upload Service:</label>
+                <select id="serviceSelect">
+                    <option value="supabase">Supabase Storage (50MB, reliable) ⭐ Only Option</option>
+                </select>
+            </div>
+
+            <div class="setting-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="notificationsCheck" checked>
+                    <span class="checkmark"></span>
+                    Show notifications
+                </label>
+            </div>
+            <div class="setting-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="autoCopyCheck" checked>
+                    <span class="checkmark"></span>
+                    Auto-copy links to clipboard
+                </label>
+            </div>
+
+            <!-- Supabase Configuration -->
+            <div class="setting-group" id="supabaseConfig">
+                <h4>Supabase Configuration</h4>
+                <p class="supabase-description">
+                    🔧 Get these values from your Supabase Dashboard → Settings → API
+                </p>
+                <label>Project URL:</label>
+                <input type="text" id="supabaseUrl" placeholder="https://your-project.supabase.co" class="supabase-input">
+                <label>Anon Key:</label>
+                <input type="text" id="supabaseAnonKey" placeholder="Your Supabase anon key" class="supabase-input">
+                <label>Bucket Name:</label>
+                <input type="text" id="supabaseBucket" placeholder="uploads" value="uploads" class="supabase-input">
+                <label>Link Expiration (seconds):</label>
+                <input type="number" id="supabaseExpiration" placeholder="3600" value="3600" min="60" max="604800" class="supabase-input">
+                <p class="supabase-warning">
+                    ⚠️ Make sure your bucket has proper RLS policies for uploads
+                </p>
+                <button id="saveSupabaseConfig" class="supabase-save-btn">
+                    Save Supabase Config
+                </button>
+            </div>
+
+            <div class="setting-group">
+                <button class="reset-btn" id="forceResetBtn">
+                    🔄 Reset to Supabase Storage
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="icons/platform-icons.js"></script>
+    <!-- Local libraries -->
+    <script src="libs/supabase.js"></script>
+    <script src="libs/jszip.min.js"></script>
+
+    <script src="popup.js"></script>
+</body>
+</html>

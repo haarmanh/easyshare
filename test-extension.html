@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Extension Test</title>
+</head>
+<body>
+    <h1>Extension Test</h1>
+    <input type="file" id="testFileInput">
+    <button onclick="testFile()">Test File</button>
+    <div id="result"></div>
+
+    <script>
+        function testFile() {
+            const input = document.getElementById('testFileInput');
+            const result = document.getElementById('result');
+            
+            if (input.files.length === 0) {
+                result.innerHTML = 'No file selected';
+                return;
+            }
+            
+            const file = input.files[0];
+            result.innerHTML = `
+                <h3>File Information:</h3>
+                <p>Name: ${file.name}</p>
+                <p>Size: ${file.size} bytes</p>
+                <p>Type: ${file.type}</p>
+                <p>Last Modified: ${new Date(file.lastModified)}</p>
+                <p>Is Empty: ${file.size === 0 ? 'YES' : 'NO'}</p>
+            `;
+            
+            console.log('File object:', file);
+            console.log('File size:', file.size);
+            console.log('File type:', file.type);
+        }
+    </script>
+</body>
+</html>

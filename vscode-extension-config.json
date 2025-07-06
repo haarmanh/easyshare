@@ -1,0 +1,77 @@
+{
+  "name": "easyshare-vscode",
+  "displayName": "EasyShare for VS Code",
+  "description": "Paste and share files directly from VS Code using EasyShare",
+  "version": "1.0.0",
+  "engines": {
+    "vscode": "^1.60.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:easyshare.pasteFiles",
+    "onCommand:easyshare.openPanel"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "easyshare.pasteFiles",
+        "title": "Paste Files to EasyShare",
+        "category": "EasyShare",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "easyshare.openPanel",
+        "title": "Open EasyShare Panel",
+        "category": "EasyShare",
+        "icon": "$(cloud-upload)"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "easyshare.pasteFiles",
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "when": "editorTextFocus"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "easyshare.pasteFiles",
+          "group": "7_modification",
+          "when": "explorerResourceIsFolder || explorerResourceIsFile"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "easyshare.pasteFiles",
+          "group": "9_cutcopypaste",
+          "when": "editorTextFocus"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "easyshare.pasteFiles",
+          "when": "true"
+        },
+        {
+          "command": "easyshare.openPanel",
+          "when": "true"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.60.0",
+    "@types/node": "16.x",
+    "typescript": "^4.4.4"
+  }
+}
