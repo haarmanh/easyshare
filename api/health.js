@@ -42,21 +42,48 @@ export default async function handler(req, res) {
       try {
         const supabase = createClient(supabaseUrl, supabaseKey);
         
-        // Test connection by listing buckets
-        const { data, error } = await supabase.storage.listBuckets();
-        
-        if (error) {
-          status.supabase.error = error.message;
+        // Test connection by trying to access the specific bucket
+        // Note: listBuckets() might be restricted, so we test bucket access directly
+        const { data: bucketData, error: bucketError } = await supabase.storage.listBuckets();
+
+        if (bucketError) {
+          // If listing buckets fails, try to access the bucket directly
+          const { data: filesData, error: filesError } = await supabase.storage
+            .from(bucketName)
+            .list('', { limit: 1 });
+
+          if (filesError) {
+            status.supabase.error = `Cannot access bucket: ${filesError.message}`;
+            status.supabase.bucketAccessible = false;
+          } else {
+            status.supabase.connected = true;
+            status.supabase.bucketAccessible = true;
+            status.supabase.bucketExists = true;
+            status.supabase.note = 'Bucket accessible (direct test)';
+          }
         } else {
           status.supabase.connected = true;
-          status.supabase.bucketsFound = data?.length || 0;
-          
+          status.supabase.bucketsFound = bucketData?.length || 0;
+
           // Check if our specific bucket exists (check both id and name)
-          const bucketExists = data?.some(bucket => bucket.id === bucketName || bucket.name === bucketName);
+          const bucketExists = bucketData?.some(bucket => bucket.id === bucketName || bucket.name === bucketName);
           status.supabase.bucketExists = bucketExists;
 
           if (!bucketExists) {
-            status.supabase.warning = `Bucket '${bucketName}' not found. Available buckets: ${data?.map(b => `${b.id} (${b.name})`).join(', ') || 'none'}`;
+            status.supabase.warning = `Bucket '${bucketName}' not found in list. Available buckets: ${bucketData?.map(b => `${b.id} (${b.name})`).join(', ') || 'none'}`;
+
+            // Try direct access as fallback
+            const { data: filesData, error: filesError } = await supabase.storage
+              .from(bucketName)
+              .list('', { limit: 1 });
+
+            if (!filesError) {
+              status.supabase.bucketExists = true;
+              status.supabase.bucketAccessible = true;
+              status.supabase.note = 'Bucket accessible via direct test despite not appearing in list';
+            }
+          } else {
+            status.supabase.bucketAccessible = true;
           }
         }
       } catch (error) {
@@ -65,7 +92,8 @@ export default async function handler(req, res) {
     }
 
     // Determine overall health status
-    const isHealthy = status.supabase.configured && status.supabase.connected && status.supabase.bucketExists;
+    const isHealthy = status.supabase.configured && status.supabase.connected &&
+                     (status.supabase.bucketExists || status.supabase.bucketAccessible);
     
     return res.status(isHealthy ? 200 : 503).json({
       healthy: isHealthy,
