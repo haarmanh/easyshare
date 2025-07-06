@@ -58,7 +58,7 @@ UPLOAD_TIMEOUT=300000
 
 Visit your Vercel URL + `/api/health`:
 ```
-https://your-app-name.vercel.app/api/health
+https://easyshare-vnbw.vercel.app/api/health
 ```
 
 You should see:
@@ -78,7 +78,7 @@ You should see:
 
 Visit your Vercel URL + `/api/config`:
 ```
-https://your-app-name.vercel.app/api/config
+https://easyshare-vnbw.vercel.app/api/config
 ```
 
 You should see your configuration settings.
@@ -89,10 +89,9 @@ You should see your configuration settings.
 
 Once you have your Vercel URL, update the extension:
 
-1. Edit `src/services/apiService.js`
-2. Replace line 9 with your actual Vercel URL:
+✅ **Already configured!** Your extension is now set to use:
 ```javascript
-this.baseUrl = 'https://your-actual-app-name.vercel.app';
+this.baseUrl = 'https://easyshare-vnbw.vercel.app';
 ```
 
 3. Rebuild the extension:

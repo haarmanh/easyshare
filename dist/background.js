@@ -7,7 +7,7 @@ class BackgroundService {
   constructor() {
     // Load configuration from environment variables or defaults
     this.defaultSettings = {
-      defaultService: 'supabase' || 'supabase',
+      defaultService: 'vercel-api' || 'supabase',
       supabaseConfig: {
         url: 'https://avrmsyqizgyxtldtmyyr.supabase.co' || '',
         anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cm1zeXFpemd5eHRsZHRteXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzMzODYsImV4cCI6MjA2NzMwOTM4Nn0.lHA8s8iiMdHGFd7SIs0kK9Spo1xafEC3z-x8aitouz0' || '',

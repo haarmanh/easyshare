@@ -525,7 +525,7 @@ class PopupController {
       this.folderCompressor = null;
     }
     this.settings = {
-      defaultService: 'supabase' || 'vercel-api',
+      defaultService: 'vercel-api' || 'vercel-api',
       supabaseConfig: {
         url: 'https://avrmsyqizgyxtldtmyyr.supabase.co' || '',
         anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cm1zeXFpemd5eHRsZHRteXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzMzODYsImV4cCI6MjA2NzMwOTM4Nn0.lHA8s8iiMdHGFd7SIs0kK9Spo1xafEC3z-x8aitouz0' || '',
@@ -1488,7 +1488,7 @@ class PopupController {
 
       // Set fresh settings with Supabase using environment variables
       this.settings = {
-        defaultService: 'supabase' || 'supabase',
+        defaultService: 'vercel-api' || 'supabase',
         supabaseConfig: {
           url: 'https://avrmsyqizgyxtldtmyyr.supabase.co' || '',
           anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF2cm1zeXFpemd5eHRsZHRteXlyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE3MzMzODYsImV4cCI6MjA2NzMwOTM4Nn0.lHA8s8iiMdHGFd7SIs0kK9Spo1xafEC3z-x8aitouz0' || '',

@@ -5,8 +5,8 @@
 
 class ApiService {
   constructor() {
-    // Use environment variable for Vercel URL, fallback to localhost for development
-    this.baseUrl = process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000';
+    // Use environment variable for Vercel URL, fallback to your production URL
+    this.baseUrl = 'easyshare-vnbw.vercel.app' ? `https://${'easyshare-vnbw.vercel.app'}` : 'https://easyshare-vnbw.vercel.app';
     this.config = null;
     this.initialized = false;
   }
