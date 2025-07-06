@@ -178,5 +178,171 @@ iconSizes.forEach(size => {
   fs.writeFileSync(iconPath + '.placeholder', `${size}x${size} icon placeholder`);
 });
 
-console.log('Build assets copied successfully!');
+// Create public directory for Vercel deployment
+const publicDir = path.join(__dirname, 'public');
+if (!fs.existsSync(publicDir)) {
+  fs.mkdirSync(publicDir, { recursive: true });
+}
+
+// Copy dist contents to public for web deployment
+function copyRecursive(src, dest) {
+  const stat = fs.statSync(src);
+  if (stat.isDirectory()) {
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest, { recursive: true });
+    }
+    const files = fs.readdirSync(src);
+    files.forEach(file => {
+      copyRecursive(path.join(src, file), path.join(dest, file));
+    });
+  } else {
+    fs.copyFileSync(src, dest);
+  }
+}
+
+// Copy all dist files to public
+copyRecursive(distDir, publicDir);
+
+// Create a simple index.html for web version
+const webIndexContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EasyShare - File Sharing Extension</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            line-height: 1.6;
+            color: #333;
+        }
+        .hero {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .download-section {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+        .button {
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            margin: 0.5rem;
+        }
+        .button:hover {
+            background: #0056b3;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .feature {
+            padding: 1.5rem;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <h1>🚀 EasyShare</h1>
+        <p>A minimalist browser extension for effortless file sharing with Supabase integration</p>
+    </div>
+
+    <div class="download-section">
+        <h2>📦 Download Extension</h2>
+        <p>Get the EasyShare browser extension for Chrome and other Chromium-based browsers:</p>
+        <a href="./dist.zip" class="button" download>Download Extension (.zip)</a>
+        <a href="https://github.com/haarmanh/easyshare" class="button">View on GitHub</a>
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <h3>🔒 Supabase Storage</h3>
+            <p>Modern, reliable cloud storage with signed URLs for secure file sharing</p>
+        </div>
+        <div class="feature">
+            <h3>📁 Folder Support</h3>
+            <p>Automatic ZIP compression for folders with real-time progress tracking</p>
+        </div>
+        <div class="feature">
+            <h3>⚡ Zero-friction</h3>
+            <p>Drag & drop files or folders for instant upload and sharing</p>
+        </div>
+        <div class="feature">
+            <h3>📋 Auto Clipboard</h3>
+            <p>Download links are automatically copied to your clipboard</p>
+        </div>
+        <div class="feature">
+            <h3>📊 Upload History</h3>
+            <p>Keep track of all your uploaded files with built-in history</p>
+        </div>
+        <div class="feature">
+            <h3>🔗 Platform Integration</h3>
+            <p>Direct sharing to email, messaging apps, and team tools</p>
+        </div>
+    </div>
+
+    <div class="download-section">
+        <h2>🛠️ Installation Instructions</h2>
+        <ol>
+            <li>Download the extension zip file above</li>
+            <li>Extract the zip file to a folder</li>
+            <li>Open Chrome and go to <code>chrome://extensions/</code></li>
+            <li>Enable "Developer mode" (top right)</li>
+            <li>Click "Load unpacked" and select the extracted folder</li>
+            <li>Configure your Supabase credentials in the extension settings</li>
+        </ol>
+    </div>
+
+    <div class="download-section">
+        <h2>⚙️ Configuration</h2>
+        <p>You'll need a Supabase account to use this extension:</p>
+        <ol>
+            <li>Create a free account at <a href="https://supabase.com">supabase.com</a></li>
+            <li>Create a new project</li>
+            <li>Go to Storage and create a public bucket named "uploads"</li>
+            <li>Copy your project URL and anon key from Settings → API</li>
+            <li>Configure these in the extension settings</li>
+        </ol>
+    </div>
+</body>
+</html>`;
+
+fs.writeFileSync(path.join(publicDir, 'index.html'), webIndexContent);
+
+// Create a zip file of the extension for download
+try {
+  const archiver = require('archiver');
+  const output = fs.createWriteStream(path.join(publicDir, 'dist.zip'));
+  const archive = archiver('zip', { zlib: { level: 9 } });
+
+  output.on('close', () => {
+    console.log('✅ Extension zip file created: ' + archive.pointer() + ' total bytes');
+  });
+
+  archive.on('error', (err) => {
+    console.log('⚠️ Could not create zip file:', err.message);
+  });
+
+  archive.pipe(output);
+  archive.directory(distDir, false);
+  archive.finalize();
+} catch (error) {
+  console.log('⚠️ Archiver not available, skipping zip creation. Run: npm install archiver');
+}
+
+console.log('✅ Build assets copied successfully!');
+console.log('✅ Public directory created for Vercel deployment');
 console.log('Note: Replace icon placeholders with actual PNG files for production.');

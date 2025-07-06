@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "name": "easyshare",
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "public"
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/dist/(.*)",
+      "dest": "/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ],
+  "functions": {},
+  "env": {
+    "SUPABASE_URL": "@supabase_url",
+    "SUPABASE_ANON_KEY": "@supabase_anon_key",
+    "SUPABASE_BUCKET_NAME": "@supabase_bucket_name",
+    "DEFAULT_SERVICE": "@default_service",
+    "SHOW_NOTIFICATIONS": "@show_notifications",
+    "AUTO_COPY_TO_CLIPBOARD": "@auto_copy_to_clipboard",
+    "KEEP_UPLOAD_HISTORY": "@keep_upload_history",
+    "MAX_HISTORY_ITEMS": "@max_history_items",
+    "MAX_FILE_SIZE": "@max_file_size",
+    "SUPABASE_LINK_EXPIRATION": "@supabase_link_expiration",
+    "DEBUG_MODE": "@debug_mode",
+    "EXTENSION_VERSION": "@extension_version",
+    "FILEIO_API_URL": "@fileio_api_url",
+    "ZEROXZERO_API_URL": "@zeroxzero_api_url",
+    "ALLOWED_FILE_TYPES": "@allowed_file_types",
+    "UPLOAD_TIMEOUT": "@upload_timeout"
+  }
+}

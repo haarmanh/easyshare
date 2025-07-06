@@ -7,14 +7,16 @@
     "watch": "node build.js",
     "copy-assets": "node build.js",
     "dev": "npm run build",
-    "clean": "rmdir /s /q dist 2>nul || rm -rf dist",
+    "clean": "rmdir /s /q dist 2>nul || rm -rf dist && rmdir /s /q public 2>nul || rm -rf public",
     "setup-env": "copy .env.example .env 2>nul || cp .env.example .env",
     "build:dev": "npm run build",
-    "build:prod": "npm run build"
+    "build:prod": "npm run build",
+    "vercel-build": "npm run build"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.268",
-    "typescript": "^5.3.0"
+    "typescript": "^5.3.0",
+    "archiver": "^7.0.1"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.50.3",
