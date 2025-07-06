@@ -41,7 +41,7 @@ export default async function handler(req, res) {
         }
       },
       api: {
-        baseUrl: process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'http://localhost:3000',
+        baseUrl: 'https://easyshare-vnbw.vercel.app', // Use production URL
         endpoints: {
           upload: '/api/upload',
           health: '/api/health',
