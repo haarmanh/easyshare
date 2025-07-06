@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>EasyShare API Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        input[type="file"] { margin: 10px 0; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 3px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 EasyShare API Test</h1>
+        
+        <div class="test-section info">
+            <h3>📋 Test Results</h3>
+            <div id="results">Click a test button to start...</div>
+        </div>
+
+        <div class="test-section">
+            <h3>🔧 API Health Check</h3>
+            <button onclick="testHealth()">Test Health API</button>
+            <div id="healthResult"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>📤 File Upload Test</h3>
+            <input type="file" id="fileInput" />
+            <button onclick="testUpload()">Test Upload</button>
+            <div id="uploadResult"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://easyshare-vnbw.vercel.app';
+
+        function log(message, type = 'info') {
+            const results = document.getElementById('results');
+            const timestamp = new Date().toLocaleTimeString();
+            results.innerHTML += `<div class="${type}">[${timestamp}] ${message}</div>`;
+        }
+
+        async function testHealth() {
+            const resultDiv = document.getElementById('healthResult');
+            resultDiv.innerHTML = '<p>Testing health API...</p>';
+            
+            try {
+                const response = await fetch(`${API_BASE}/api/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Health Check Passed</h4>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                    log('Health API: SUCCESS', 'success');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>❌ Health Check Failed</h4>
+                            <p>Status: ${response.status}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                    log(`Health API: FAILED (${response.status})`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Health Check Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                log(`Health API: ERROR - ${error.message}`, 'error');
+            }
+        }
+
+        async function testUpload() {
+            const fileInput = document.getElementById('fileInput');
+            const resultDiv = document.getElementById('uploadResult');
+            
+            if (!fileInput.files[0]) {
+                resultDiv.innerHTML = '<div class="error">Please select a file first!</div>';
+                return;
+            }
+
+            const file = fileInput.files[0];
+            resultDiv.innerHTML = `<p>Uploading ${file.name}...</p>`;
+            log(`Starting upload: ${file.name} (${file.size} bytes)`);
+
+            try {
+                // Convert file to base64
+                const fileData = await fileToBase64(file);
+                
+                const payload = {
+                    fileName: file.name,
+                    fileData: fileData,
+                    fileType: file.type || 'application/octet-stream'
+                };
+
+                const response = await fetch(`${API_BASE}/api/upload`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payload)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    resultDiv.innerHTML = `
+                        <div class="success">
+                            <h4>✅ Upload Successful!</h4>
+                            <p><strong>Download Link:</strong> <a href="${data.link}" target="_blank">${data.link}</a></p>
+                            <p><strong>File Name:</strong> ${data.fileName}</p>
+                            <p><strong>Expires In:</strong> ${data.expiresIn} seconds</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                    log(`Upload SUCCESS: ${file.name}`, 'success');
+                } else {
+                    resultDiv.innerHTML = `
+                        <div class="error">
+                            <h4>❌ Upload Failed</h4>
+                            <p>Status: ${response.status}</p>
+                            <p>Error: ${data.error || 'Unknown error'}</p>
+                            <pre>${JSON.stringify(data, null, 2)}</pre>
+                        </div>
+                    `;
+                    log(`Upload FAILED: ${response.status} - ${data.error}`, 'error');
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">
+                        <h4>❌ Upload Error</h4>
+                        <p>${error.message}</p>
+                    </div>
+                `;
+                log(`Upload ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+
+        // Auto-run health check on page load
+        window.onload = () => {
+            testHealth();
+        };
+    </script>
+</body>
+</html>
