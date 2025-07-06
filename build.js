@@ -1,6 +1,63 @@
 const fs = require('fs');
 const path = require('path');
 
+// Load environment variables from .env file
+function loadEnvFile() {
+  const envPath = path.join(__dirname, '.env');
+  const env = {};
+
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const lines = envContent.split('\n');
+
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (trimmedLine && !trimmedLine.startsWith('#')) {
+        const [key, ...valueParts] = trimmedLine.split('=');
+        if (key && valueParts.length > 0) {
+          env[key.trim()] = valueParts.join('=').trim();
+        }
+      }
+    }
+    console.log('✅ Environment variables loaded from .env file');
+  } else {
+    console.log('⚠️ No .env file found, using defaults');
+  }
+
+  return env;
+}
+
+// Inject environment variables into JavaScript files
+function injectEnvVariables(content, env) {
+  let injectedContent = content;
+
+  // Replace environment variable placeholders
+  for (const [key, value] of Object.entries(env)) {
+    const placeholder = `process.env.${key}`;
+    const quotedPlaceholder = `'${placeholder}'`;
+    const doubleQuotedPlaceholder = `"${placeholder}"`;
+
+    // Replace with proper JavaScript values
+    if (value === 'true' || value === 'false') {
+      injectedContent = injectedContent.replace(new RegExp(placeholder, 'g'), value);
+      injectedContent = injectedContent.replace(new RegExp(quotedPlaceholder, 'g'), value);
+      injectedContent = injectedContent.replace(new RegExp(doubleQuotedPlaceholder, 'g'), value);
+    } else if (!isNaN(value) && value !== '') {
+      injectedContent = injectedContent.replace(new RegExp(placeholder, 'g'), value);
+      injectedContent = injectedContent.replace(new RegExp(quotedPlaceholder, 'g'), value);
+      injectedContent = injectedContent.replace(new RegExp(doubleQuotedPlaceholder, 'g'), value);
+    } else {
+      injectedContent = injectedContent.replace(new RegExp(placeholder, 'g'), `'${value}'`);
+      injectedContent = injectedContent.replace(new RegExp(quotedPlaceholder, 'g'), `'${value}'`);
+      injectedContent = injectedContent.replace(new RegExp(doubleQuotedPlaceholder, 'g'), `'${value}'`);
+    }
+  }
+
+  return injectedContent;
+}
+
+const env = loadEnvFile();
+
 // Create dist directory if it doesn't exist
 const distDir = path.join(__dirname, 'dist');
 if (!fs.existsSync(distDir)) {
@@ -37,21 +94,39 @@ fs.copyFileSync(
   path.join(stylesDir, 'popup.css')
 );
 
-// Copy standalone JavaScript files
-fs.copyFileSync(
+// Copy and process standalone JavaScript files with environment variables
+const backgroundContent = fs.readFileSync(
   path.join(__dirname, 'src', 'standalone', 'background.js'),
-  path.join(distDir, 'background.js')
+  'utf8'
+);
+fs.writeFileSync(
+  path.join(distDir, 'background.js'),
+  injectEnvVariables(backgroundContent, env)
 );
 
-fs.copyFileSync(
+const popupContent = fs.readFileSync(
   path.join(__dirname, 'src', 'standalone', 'popup.js'),
-  path.join(distDir, 'popup.js')
+  'utf8'
+);
+fs.writeFileSync(
+  path.join(distDir, 'popup.js'),
+  injectEnvVariables(popupContent, env)
 );
 
 // Copy platform icons
 fs.copyFileSync(
   path.join(__dirname, 'src', 'icons', 'platform-icons.js'),
   path.join(iconsDir, 'platform-icons.js')
+);
+
+// Copy configuration utility
+const configContent = fs.readFileSync(
+  path.join(__dirname, 'src', 'utils', 'config.js'),
+  'utf8'
+);
+fs.writeFileSync(
+  path.join(distDir, 'config.js'),
+  injectEnvVariables(configContent, env)
 );
 
 // Create libs directory in dist

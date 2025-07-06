@@ -485,17 +485,18 @@ class PopupController {
       this.folderCompressor = null;
     }
     this.settings = {
-      defaultService: 'supabase',
+      defaultService: 'supabase' || 'supabase',
       supabaseConfig: {
-        url: '',
-        anonKey: '',
-        bucketName: 'uploads',
-        linkExpiration: 3600 // 1 hour
+        url: 'https://your-project.supabase.co' || '',
+        anonKey: 'your_supabase_anon_key_here' || '',
+        bucketName: 'uploads' || 'uploads',
+        linkExpiration: parseInt(3600) || 3600
       },
-      showNotifications: true,
-      autoCopyToClipboard: false,
-      keepUploadHistory: true,
-      maxHistoryItems: 50
+      showNotifications: true === 'true' || true,
+      autoCopyToClipboard: true === 'true' || false,
+      keepUploadHistory: true === 'true' || true,
+      maxHistoryItems: parseInt(50) || 50,
+      debugMode: false === 'true' || false
     };
 
     this.initializeElements();
@@ -1445,19 +1446,20 @@ class PopupController {
       await chrome.storage.sync.clear();
       await chrome.storage.local.clear();
 
-      // Set fresh settings with Supabase
+      // Set fresh settings with Supabase using environment variables
       this.settings = {
-        defaultService: 'supabase',
+        defaultService: 'supabase' || 'supabase',
         supabaseConfig: {
-          url: '',
-          anonKey: '',
-          bucketName: 'uploads',
-          linkExpiration: 3600
+          url: 'https://your-project.supabase.co' || '',
+          anonKey: 'your_supabase_anon_key_here' || '',
+          bucketName: 'uploads' || 'uploads',
+          linkExpiration: parseInt(3600) || 3600
         },
-        showNotifications: true,
-        autoCopyToClipboard: false,
-        keepUploadHistory: true,
-        maxHistoryItems: 50
+        showNotifications: true === 'true' || true,
+        autoCopyToClipboard: true === 'true' || false,
+        keepUploadHistory: true === 'true' || true,
+        maxHistoryItems: parseInt(50) || 50,
+        debugMode: false === 'true' || false
       };
 
       await this.saveSettings();

@@ -5,18 +5,20 @@ console.log('🚀 EasyShare background service worker loading...');
 
 class BackgroundService {
   constructor() {
+    // Load configuration from environment variables or defaults
     this.defaultSettings = {
-      defaultService: 'supabase',
+      defaultService: 'supabase' || 'supabase',
       supabaseConfig: {
-        url: '',
-        anonKey: '',
-        bucketName: 'uploads',
-        linkExpiration: 3600
+        url: 'https://your-project.supabase.co' || '',
+        anonKey: 'your_supabase_anon_key_here' || '',
+        bucketName: 'uploads' || 'uploads',
+        linkExpiration: parseInt(3600) || 3600
       },
-      showNotifications: true,
-      autoCopyToClipboard: true,
-      keepUploadHistory: true,
-      maxHistoryItems: 50
+      showNotifications: true === 'true' || true,
+      autoCopyToClipboard: true === 'true' || true,
+      keepUploadHistory: true === 'true' || true,
+      maxHistoryItems: parseInt(50) || 50,
+      debugMode: false === 'true' || false
     };
     
     this.setupEventListeners();

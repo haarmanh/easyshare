@@ -7,7 +7,10 @@
     "watch": "node build.js",
     "copy-assets": "node build.js",
     "dev": "npm run build",
-    "clean": "rmdir /s /q dist 2>nul || rm -rf dist"
+    "clean": "rmdir /s /q dist 2>nul || rm -rf dist",
+    "setup-env": "copy .env.example .env 2>nul || cp .env.example .env",
+    "build:dev": "npm run build",
+    "build:prod": "npm run build"
   },
   "devDependencies": {
     "@types/chrome": "^0.0.268",

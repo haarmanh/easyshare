@@ -15,6 +15,27 @@ Een moderne browser extensie voor het snel delen van bestanden en mappen via Sup
 
 ## 🚀 Installatie
 
+### 1. Environment Variables Setup
+1. **Kopieer de environment template:**
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Configureer je Supabase credentials** in `.env`:
+   ```env
+   SUPABASE_URL=https://your-project.supabase.co
+   SUPABASE_ANON_KEY=your_supabase_anon_key_here
+   SUPABASE_BUCKET_NAME=uploads
+   ```
+
+3. **Build de extensie:**
+   ```bash
+   npm run build
+   ```
+
+📖 **Zie [ENV_SETUP.md](ENV_SETUP.md) voor gedetailleerde environment variable configuratie**
+
+### 2. Browser Extension Installatie
 1. Download de extensie bestanden
 2. Open Chrome en ga naar `chrome://extensions/`
 3. Schakel "Developer mode" in (rechtsboven)

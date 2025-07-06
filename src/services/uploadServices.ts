@@ -3,8 +3,8 @@ import { UploadService, UploadResponse, UploadOptions, FileUploadProgress } from
 // File.io service implementation
 export class FileIOService implements UploadService {
   name = 'file.io';
-  maxFileSize = 2 * 1024 * 1024 * 1024; // 2GB
-  supportedFormats = ['*']; // Supports all file types
+  maxFileSize = parseInt(process.env.MAX_FILE_SIZE || '2147483648'); // 2GB default
+  supportedFormats = (process.env.ALLOWED_FILE_TYPES || '*').split(','); // Supports all file types
 
   async upload(file: File, options: UploadOptions = {}): Promise<UploadResponse> {
     try {
@@ -68,8 +68,8 @@ export class FileIOService implements UploadService {
           });
         });
 
-        xhr.open('POST', 'https://file.io');
-        xhr.timeout = 300000; // 5 minutes timeout
+        xhr.open('POST', process.env.FILEIO_API_URL || 'https://file.io');
+        xhr.timeout = parseInt(process.env.UPLOAD_TIMEOUT || '300000'); // 5 minutes timeout
         xhr.send(formData);
       });
     } catch (error) {
@@ -84,8 +84,8 @@ export class FileIOService implements UploadService {
 // 0x0.st service implementation (alternative)
 export class ZeroXZeroService implements UploadService {
   name = '0x0.st';
-  maxFileSize = 512 * 1024 * 1024; // 512MB
-  supportedFormats = ['*'];
+  maxFileSize = parseInt(process.env.MAX_FILE_SIZE || '536870912'); // 512MB default
+  supportedFormats = (process.env.ALLOWED_FILE_TYPES || '*').split(',');
 
   async upload(file: File, options: UploadOptions = {}): Promise<UploadResponse> {
     try {
@@ -128,7 +128,7 @@ export class ZeroXZeroService implements UploadService {
           });
         });
 
-        xhr.open('POST', 'https://0x0.st');
+        xhr.open('POST', process.env.ZEROXZERO_API_URL || 'https://0x0.st');
         xhr.send(formData);
       });
     } catch (error) {

@@ -485,17 +485,18 @@ class PopupController {
       this.folderCompressor = null;
     }
     this.settings = {
-      defaultService: 'supabase',
+      defaultService: process.env.DEFAULT_SERVICE || 'supabase',
       supabaseConfig: {
-        url: '',
-        anonKey: '',
-        bucketName: 'uploads',
-        linkExpiration: 3600 // 1 hour
+        url: process.env.SUPABASE_URL || '',
+        anonKey: process.env.SUPABASE_ANON_KEY || '',
+        bucketName: process.env.SUPABASE_BUCKET_NAME || 'uploads',
+        linkExpiration: parseInt(process.env.SUPABASE_LINK_EXPIRATION) || 3600
       },
-      showNotifications: true,
-      autoCopyToClipboard: false,
-      keepUploadHistory: true,
-      maxHistoryItems: 50
+      showNotifications: process.env.SHOW_NOTIFICATIONS === 'true' || true,
+      autoCopyToClipboard: process.env.AUTO_COPY_TO_CLIPBOARD === 'true' || false,
+      keepUploadHistory: process.env.KEEP_UPLOAD_HISTORY === 'true' || true,
+      maxHistoryItems: parseInt(process.env.MAX_HISTORY_ITEMS) || 50,
+      debugMode: process.env.DEBUG_MODE === 'true' || false
     };
 
     this.initializeElements();
@@ -1445,19 +1446,20 @@ class PopupController {
       await chrome.storage.sync.clear();
       await chrome.storage.local.clear();
 
-      // Set fresh settings with Supabase
+      // Set fresh settings with Supabase using environment variables
       this.settings = {
-        defaultService: 'supabase',
+        defaultService: process.env.DEFAULT_SERVICE || 'supabase',
         supabaseConfig: {
-          url: '',
-          anonKey: '',
-          bucketName: 'uploads',
-          linkExpiration: 3600
+          url: process.env.SUPABASE_URL || '',
+          anonKey: process.env.SUPABASE_ANON_KEY || '',
+          bucketName: process.env.SUPABASE_BUCKET_NAME || 'uploads',
+          linkExpiration: parseInt(process.env.SUPABASE_LINK_EXPIRATION) || 3600
         },
-        showNotifications: true,
-        autoCopyToClipboard: false,
-        keepUploadHistory: true,
-        maxHistoryItems: 50
+        showNotifications: process.env.SHOW_NOTIFICATIONS === 'true' || true,
+        autoCopyToClipboard: process.env.AUTO_COPY_TO_CLIPBOARD === 'true' || false,
+        keepUploadHistory: process.env.KEEP_UPLOAD_HISTORY === 'true' || true,
+        maxHistoryItems: parseInt(process.env.MAX_HISTORY_ITEMS) || 50,
+        debugMode: process.env.DEBUG_MODE === 'true' || false
       };
 
       await this.saveSettings();
