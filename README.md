@@ -15,17 +15,18 @@ Een moderne browser extensie voor het snel delen van bestanden en mappen via Sup
 
 ## 🚀 Installatie
 
-### 1. Environment Variables Setup
-1. **Kopieer de environment template:**
-   ```bash
-   cp .env.example .env
-   ```
+### 1. Vercel Backend Setup (Required)
+1. **Deploy naar Vercel:**
+   - Fork deze repository
+   - Verbind met Vercel via GitHub
+   - Stel environment variables in via Vercel dashboard
 
-2. **Configureer je Supabase credentials** in `.env`:
+2. **Environment Variables in Vercel:**
    ```env
    SUPABASE_URL=https://your-project.supabase.co
    SUPABASE_ANON_KEY=your_supabase_anon_key_here
    SUPABASE_BUCKET_NAME=uploads
+   VERCEL_URL=your-app.vercel.app
    ```
 
 3. **Build de extensie:**
@@ -33,7 +34,8 @@ Een moderne browser extensie voor het snel delen van bestanden en mappen via Sup
    npm run build
    ```
 
-📖 **Zie [ENV_SETUP.md](ENV_SETUP.md) voor gedetailleerde environment variable configuratie**
+📖 **Zie [ARCHITECTURE.md](ARCHITECTURE.md) voor de complete client-server architectuur**
+📖 **Zie [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) voor deployment instructies**
 
 ### 2. Browser Extension Installatie
 1. Download de extensie bestanden

@@ -143,7 +143,46 @@ class LinkValidator {
   }
 }
 
-// Supabase Storage Service - Modern, reliable cloud storage
+// Vercel API Service - Proxies requests to Supabase through Vercel backend
+class VercelApiService {
+  constructor() {
+    this.name = 'vercel-api';
+    this.apiService = new ApiService();
+    this.maxFileSize = 100 * 1024 * 1024; // 100MB
+    this.supportedFormats = ['*']; // All formats supported
+  }
+
+  async upload(file, options = {}) {
+    try {
+      console.log('🚀 Using Vercel API service for upload:', file.name);
+
+      // Use the API service to upload
+      const result = await this.apiService.uploadFile(file, options);
+
+      if (result.success) {
+        return {
+          success: true,
+          link: result.link,
+          message: result.message || 'File uploaded successfully via Vercel API!',
+          expiresIn: result.expiresIn
+        };
+      } else {
+        return {
+          success: false,
+          error: result.error || 'Upload failed'
+        };
+      }
+    } catch (error) {
+      console.error('❌ Vercel API upload error:', error);
+      return {
+        success: false,
+        error: `Vercel API error: ${error.message}`
+      };
+    }
+  }
+}
+
+// Supabase Storage Service - Legacy direct connection (deprecated)
 class SupabaseStorageService {
   constructor() {
     this.name = 'supabase';
@@ -470,6 +509,7 @@ class FolderCompressor {
 class PopupController {
   constructor() {
     this.services = {
+      'vercel-api': new VercelApiService(),
       'supabase': new SupabaseStorageService(),
       'test': new TestUploadService()
     };
@@ -485,7 +525,7 @@ class PopupController {
       this.folderCompressor = null;
     }
     this.settings = {
-      defaultService: process.env.DEFAULT_SERVICE || 'supabase',
+      defaultService: process.env.DEFAULT_SERVICE || 'vercel-api',
       supabaseConfig: {
         url: process.env.SUPABASE_URL || '',
         anonKey: process.env.SUPABASE_ANON_KEY || '',

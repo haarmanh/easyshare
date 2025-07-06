@@ -129,6 +129,22 @@ fs.writeFileSync(
   injectEnvVariables(configContent, env)
 );
 
+// Create services directory in dist
+const servicesDir = path.join(distDir, 'services');
+if (!fs.existsSync(servicesDir)) {
+  fs.mkdirSync(servicesDir, { recursive: true });
+}
+
+// Copy API service
+const apiServiceContent = fs.readFileSync(
+  path.join(__dirname, 'src', 'services', 'apiService.js'),
+  'utf8'
+);
+fs.writeFileSync(
+  path.join(servicesDir, 'apiService.js'),
+  injectEnvVariables(apiServiceContent, env)
+);
+
 // Create libs directory in dist
 const libsDir = path.join(distDir, 'libs');
 if (!fs.existsSync(libsDir)) {
