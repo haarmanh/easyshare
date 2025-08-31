@@ -955,6 +955,12 @@ class PopupController {
 
   async uploadFile(file) {
     try {
+      // Check internet connection first
+      if (!navigator.onLine) {
+        this.showError('No internet connection. Please check your network and try again.');
+        return;
+      }
+
       // Prevent duplicate uploads
       if (this.isUploading) {
         console.log('⚠️ Upload already in progress, ignoring duplicate request');
@@ -975,12 +981,11 @@ class PopupController {
         }
       }
 
-      // FORCE VERCEL API SERVICE - Always use vercel-api, never fallback to supabase
-      let uploadService = this.services['vercel-api'];
+      // Try primary service first
+      let uploadService = this.services[this.settings.defaultService] || this.services['supabase'];
       console.log('🚀 UPLOAD DEBUG:');
       console.log('- Settings defaultService:', this.settings.defaultService);
       console.log('- Available services:', Object.keys(this.services));
-      console.log('- FORCED SERVICE: vercel-api (bypassing settings)');
       console.log('- Selected service:', uploadService.name);
       console.log('- Service object:', uploadService);
 

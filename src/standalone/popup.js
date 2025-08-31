@@ -955,6 +955,12 @@ class PopupController {
 
   async uploadFile(file) {
     try {
+      // Check internet connection first
+      if (!navigator.onLine) {
+        this.showError('No internet connection. Please check your network and try again.');
+        return;
+      }
+
       // Prevent duplicate uploads
       if (this.isUploading) {
         console.log('⚠️ Upload already in progress, ignoring duplicate request');

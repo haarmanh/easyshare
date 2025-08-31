@@ -175,23 +175,26 @@ try {
   fs.writeFileSync(path.join(libsDir, 'jszip.min.js'), '// JSZip placeholder - install jszip');
 }
 
-// Create minimal PNG icon files (1x1 blue pixel - Chrome will scale)
+// Copy real icon files from src/icons
 const iconSizes = [16, 32, 48, 128];
 
-// Minimal 1x1 blue PNG (base64 encoded)
-const minimalBluePNG = Buffer.from(
-  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
-  'base64'
-);
-
 iconSizes.forEach(size => {
-  const iconPath = path.join(iconsDir, `icon${size}.png`);
+  const srcIconPath = path.join(__dirname, 'src', 'icons', `icon${size}.png`);
+  const destIconPath = path.join(iconsDir, `icon${size}.png`);
 
-  // Write the minimal PNG file
-  fs.writeFileSync(iconPath, minimalBluePNG);
-
-  // Keep placeholder for reference
-  fs.writeFileSync(iconPath + '.placeholder', `${size}x${size} icon placeholder`);
+  // Copy the real icon file if it exists
+  if (fs.existsSync(srcIconPath)) {
+    fs.copyFileSync(srcIconPath, destIconPath);
+    console.log(`✅ Copied real icon: icon${size}.png`);
+  } else {
+    console.log(`⚠️ Icon not found: ${srcIconPath}`);
+    // Create placeholder only if real icon doesn't exist
+    const minimalBluePNG = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==',
+      'base64'
+    );
+    fs.writeFileSync(destIconPath, minimalBluePNG);
+  }
 });
 
 // Create public directory for Vercel deployment

@@ -15,7 +15,9 @@
     "https://*.supabase.co/*",
     "https://*.supabase.in/*",
     "https://cdn.jsdelivr.net/*",
-    "https://*/*"
+    "https://easyshare-vnbw.vercel.app/*",
+    "https://vercel.app/*",
+    "https://*.vercel.app/*"
   ],
   
   "background": {
