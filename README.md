@@ -199,6 +199,19 @@ MIT License - zie LICENSE bestand voor details.
 
 Pull requests zijn welkom! Voor grote wijzigingen, open eerst een issue om te bespreken wat je wilt veranderen.
 
-## 📞 Support
+## 📚 Documentatie
 
-Voor vragen of problemen, open een issue in de GitHub repository.
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Complete technische architectuur
+- [VERCEL_DEPLOYMENT.md](VERCEL_DEPLOYMENT.md) - Deployment instructies
+- [SUPABASE_SETUP_QUICK_GUIDE.md](SUPABASE_SETUP_QUICK_GUIDE.md) - Snelle Supabase setup
+- [TESTING.md](TESTING.md) - Test procedures
+- [TROUBLESHOOTING.md](TROUBLESHOOTING.md) - Probleemoplossing
+- [CHROME_STORE_LISTING.md](CHROME_STORE_LISTING.md) - Chrome Web Store submission info
+
+## 📞 Support & Contact
+
+**Developer:** Henk Haarman
+**Email:** [haarmanh@gmail.com](mailto:haarmanh@gmail.com)
+**GitHub:** [https://github.com/haarmanh/easyshare](https://github.com/haarmanh/easyshare)
+**Issues:** [Report bugs or request features](https://github.com/haarmanh/easyshare/issues)
+**Privacy Policy:** [View Privacy Policy](https://easyshare-1y1ep8rh2-henks-projects-f5d2fa44.vercel.app/privacy-policy.html)
